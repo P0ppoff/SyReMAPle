@@ -1,0 +1,271 @@
+<HTML>
+<HEAD>
+<TITLE>Sujet de PROJET RICM4 - Recherche d'images par l'exemple</TITLE>
+<!-- Changed by: Georges Qu&eacute;not ,  2-mars-2016 -->
+</HEAD>
+<BODY>
+<H1>RICM4<BR>Acc&egrave;s &agrave; l'Information Multim&eacute;dia<BR>
+PROJET - R&eacute;alisation d'un syst&egrave;me de recherche d'images fixes</H1>
+
+<b>Note :</b> ce sujet et les données associées (à l'exception des images) sont
+accessibles en local sur le serveur de l'UFR&nbsp;:
+<UL>
+<LI>par le web : <A HREF="http://goedel.e.ujf-grenoble.fr/~quenotg/HMUL8R6B/PROJET">http://goedel.e.ujf-grenoble.fr/~quenotg/HMUL8R6B/PROJET</A>
+<LI>par le système de fichier : /u/q/quenotg/HMUL8R6B/PROJET
+</UL>
+Si vous travaillez sur les machines de l'UFR, il n'est donc pas nécessaire
+(et pas recommandé) de recopier les données dans votre répertoire. Vous pouvez
+ouvrir directement les fichiers à partir de /u/q/quenotg/HMUL8R6B/PROJET/...
+(à l'exception des images que vous pouvez récupérer dynamiquement à partir
+de leur URL avec le programme fourni et qu'il n'est donc pas nécessaire de
+recopier non plus).
+<H2>1. But</H2>
+
+<P> Le but de ce projet est de r&eacute;aliser un syst&egrave;me
+de recherche dans une base d'image &agrave; partir d'une image requ&ecirc;te.
+Les images sont recherch&eacute;es dans la base selon la similarit&eacute;
+de leurs distributions de couleur ou de mots visuels avec celles de l'image.
+Le distribution de couleurs sera repr&eacute;sent&eacute;e par un histogramme
+tridimensionnel de couleurs. Le distribution de mots visuels
+repr&eacute;sent&eacute;e par un histogramme de descripteurs locaux de type SIFT.
+
+<p>Bien que ce ne soit pas obligatoire, le syst&egrave;me pourra
+fonctionnera sur le web (par la CGI). Une alternative plus simple est de seulement
+g&eacute;n&eacute;rer une page web puis de l'afficher avec un navigateur.
+Dans tous les cas, il faut pouvoir afficher l'image requ&ecirc;te et une
+liste des images les plus proches au sens de la couleur et/ou des descripteurs SIFT.
+
+
+<H2>2. Donn&eacute;es fournies</H2>
+
+<P>Les images que allez utiliser sont issues du projet
+<A HREF="http://pascallin.ecs.soton.ac.uk/challenges/VOC/voc2010/index.html">VOC 2010</A>
+sur la classification automatique d'images (pour information, vous n'avez pas
+besoin d'&eacute;tudier ce site).</P>
+
+<P>Vous travaillerez sur la sous collection de test : (<A HREF="test">test</A>,
+9637 images). Le r&eacute;pertoire <tt>test</tt> contient:
+<UL>
+<LI>Une liste d'images&nbsp;: <tt>list.txt</tt>&nbsp;;
+<LI>Une liste correspondante d'URLs permettant de les visualiser dans une
+page web&nbsp;: <tt>urls.txt</tt>&nbsp;.
+</UL>
+</P>
+
+<H2>3. Programmes fournis</H2>
+
+Vous pourrez utiliser les &eacute;l&eacute;ments de code :
+<A HREF="cgiu.h">cgiu.h</A>/<A HREF="cgiu.c">cgiu.c</A>, 
+utilitaire pour la CGI, et
+<A HREF="proc.h">proc.h</A>/<A HREF="proc.c">proc.c</A>
+qui contient d'autres fonctions utiles pour la r&eacute;alisation du projet.
+Un programme <A HREF="testproc.c">testproc.c</A> vous permet de tester
+quelques fonctions de ce module et vous montre comment les utiliser.
+Il se compile avec&nbsp;:
+<PRE>
+cc cgiu.c proc.c testproc.c -o testproc
+</PRE>
+(tout n'est pas utile pour ces TPs).
+
+<p>Si vous voulez faire une interface par CGI,
+vous pouvez partir du formulaire et du programme suivants : <A HREF="form_post4.html">form_post4.html</A>
+et <A HREF="post4.c">post4.c</A>. Pour plus d'informations &agrave; propos de CGI,
+voir <A HREF="html-cgi.pdf">html-cgi.pdf</A>
+et <A HREF="langageC.pdf">langageC.pdf</A>.<BR>
+Vous pouvez regarder le <A HREF="http://www-ufrima.imag.fr/INTRANET/placard/INFO/ricm4/RIM/TP2">TP2</A> de l'ancien cours RICM4-RIM
+pour des informations relatives au placement du formulaire HTML et du programme CGI,
+ainsi qu'au lien entre les deux avec le serveur HTTP de goedel.
+
+<p>Nous vous fournisson aussi un module pour charger en mémoire des images au
+format JPEG&nbsp;:
+<A HREF="rdjpeg.h">rdjpeg.h</A>/<A HREF="rdjpeg.c">rdjpeg.c</A> et un programme
+exemple qui charge une image en mémoire et affiche les plans rouge, vert et
+bleu du premier bloc 8x8 ce cette image&nbsp;:
+<A HREF="read_image.c">read_image.c</A>. Il se compile avec&nbsp;:
+<PRE>
+cc rdjpeg.c read_image.c -o read_image
+</PRE>
+<p> Un executable Linux <A HREF="djpeg">djpeg</A> est fourni pour le cas où il
+ne serait pas disponible sur votre système. S'il ne fonctionne pas, vous pouvez l'installer sur
+ubuntu avec la commande&nbsp;:
+<PRE>
+sudo apt-get install libjpeg-progs
+</PRE>
+Ça installe tout ce qui concerne le JPEG, y compris djpeg qui doit
+alors se retrouver dans <tt>/usr/bin</tt> . 
+
+<H2>4. Impl&eacute;mentation</H2>
+
+<H3>4.1. Premi&egrave;re partie: recherche par la distribution de couleurs.</H3>
+
+Il y a deux programmes &agrave; &eacute;crire (ou un seul avec deux options).
+<UL>
+<LI> Le premier s'ex&eacute;cute une seule fois (hors ligne). Il construit un index
+qui est un fichier contenant les histogrammes de toutes les images de la collection
+dans laquelle on effectue la recherche.
+<LI>Le second s'ex&eacute;cute pour chaque requ&ecirc;te (en ligne). Il calcule la
+distance Euclidienne entre l'histogramme de l'image requ&ecirc;te et les histogrammes
+pr&eacute;calcul&eacute;s de toutes les images de la collections. Il trie enfin
+les images de la collection en fonction de ces distances et affiche les 10 plus
+proches par ordre de distance croissante.
+</UL>
+
+&Eacute;tapes :
+<UL>
+<LI> Calculer un histogramme tridimensionnel de couleurs sur une image.
+Les composantes RGB seront chacune d&eacute;compos&eacute;es en 4 intervalles 
+&eacute;gaux. L'histogramme sera normalis&eacute; (somme des valeurs
+&eacute;gale à 1).
+
+<LI> Calculer les histogrammes de couleurs pour toutes les images de la
+collection. Stocker le r&eacute;sultat dans un fichier binaire.
+
+<LI> Calculer les distances entre
+l'histogramme de l'image requ&ecirc;te et les histogrammes de couleurs pour
+toutes les images.
+
+<LI> Trier les images de la collection en fonction de leur distance à
+l'image requ&ecirc;te et afficher les 10 plus proches.
+</UL>
+
+Tri :
+<UL>
+<LI> Pour le tri, il faut conserver la relation entre la distance calculée
+et la r&eacute;f&eacute;rence de l'image correspondante. On utilise pour
+cela un tableau de structures contenant le numéro de l'image et la distance
+correspondante. Voir <A HREF="proc.h">proc.h</A> (structure KEY).
+
+<LI> On peut utiliser la fonction C standard qsort() (voir le man) pour
+trier le tableau de structures. Utiliser la fonction keyCompare() de
+<A HREF="proc.c">proc.c</A>.
+</UL>
+
+Affichage des r&eacute;sultats :
+
+<UL>
+<LI> Sans passer pa un CGI, il est possible de visualiser les
+r&eacute;sultats de la recherche dans une page HTML. Il suffit pour cela
+d'encapsuler les URL des images avec des balises <tt>&lt;IMG SRC="..."&gt;</tt>
+et de rediriger la sortie du programme vers un fichier out.html qu'il
+n'y a plus qu'&agrave; charger dans un navigateur.
+</UL>
+
+<H3>4.2. Deuxi&egrave;me partie: recherche par mots visuels.</H3>
+
+<H4>4.2.1. Calcul de SIFTs locaux (programme ou r&eacute;sultats fournis)</H4>
+
+<p>Il existe des approches qui permettent d'extraire des carcat&eacute;ristiques visuelles, bas&eacute;es sur des informations localis&eacute;es autour d'un point d'une image. Ces approches proposent &eacute;galement des mani&egrave;res de d&eacute;terminer autour de quel point travailler et &eacute;galement à quelle distance autour du point effectuer l'extraction de caract&eacute;ristique.</p>
+
+<p> L'approche SIFT (pour Scale Invariant Feature Transform) et une approche
+qui donne de très bons r&eacute;sultats. Il existe quelques programmes qui
+r&eacute;alisent cette extraction, comme par exemple
+<A HREF="http://koen.me/research/colordescriptors/">colorDescriptor</A>
+de Koen van de Sande (vous pouvez regarder cela en dehors du TP).
+Comme ce programme est assez lent (quelques secondes par image...).
+Nous vous proposons d'utiliser les fichiers g&eacute;n&eacute;r&eacute;s
+par ce programme comme source pour votre travail.</p>
+
+<p> L'ex&eacute;cutables Linux 64-bits de colorDescriptor est disponible
+sur mandelbrot dans <tt>/u/q/quenotg/ricm5-aim/bin/colorDescriptor</tt>.<br>
+Pour obtenir le fichier sift correspondant &agrave; ceux d&eacute;j&agrave;
+extraits, il faut utiliser la commande&nbsp;:
+<PRE>
+colorDescriptor --descriptor sift sample.jpg --output sample.sift
+</PRE>
+
+<p> Une difficult&eacute; de ces approches est qu'il n'y a pas un nombre pr&eacute;d&eacute;fini de caract&eacute;ristiques extraites pour chaque image (&agrave; l'inverse de ce qui se passe pour les histogrammes de couleurs vous avez calcul&eacute;s). Il faut alors avoir recours à une &eacute;tape de clustering (point suivant).</p>
+
+<p>Le programme de Koen van de Sande g&eacute;nère une liste de caract&eacute;ristiques à 128 dimensions, selon le format suivant :</p>
+
+<PRE>
+KOEN1
+128
+< entier : nb de caract&eacute;ristiques extraites >
+(< ligne de caract&eacute;ristiques >)*
+</PRE>
+
+avec une ligne de caract&eacute;ristiques telle que :
+<PRE>
+&lt;CIRCLE &lt;entier&gt; &lt;entier&gt; &lt;r&eacute;el&gt; &lt;entier&gt; &lt;r&eacute;el&gt;&gt;;entier (entier)*;
+</PRE> 
+Par exemple :
+
+<PRE>
+&lt;CIRCLE 159 154 1.78381 0 0.000296159&gt;; 0 0 31 20 8 0 0 0 0 2 13 13 2 0 10 10 0 4 22 2 0 7 32 4 0 2 18 3 1 4 12 0 7 0 0 6 16 0 0 3 99 7 0 1 2 1 59 140 22 4 0 0 0 100 140 69 0 0 0 0 0 44 140 11 11 4 0 6 16 0 0 0 140 140 19 0 1 0 6 33 56 114 140 15 1 35 75 22 0 8 140 16 1 15 116 9 0 1 0 4 14 0 0 0 10 62 28 1 1 0 0 0 1 39 140 7 0 0 0 0 8 3 140 7 0 0 5 18;
+</PRE>
+<p>qui veut dire que dans la r&eacute;gion de centre (159,154) une caract&eacute;ristique à &eacute;t&eacute; extraite à une &eacute;chelle 1,78381 avec une orientation de 0 et un degr&eacute; de visibilit&eacute; de 0.000296159.</p>
+
+<p> Afin de pouvoir utiliser ces caract&eacute;ristiques pour le clustering, il faut les mettre en forme, c'est-à-dire &eacute;liminer les infomations autres que les caract&eacute;ristiques elles-m&ecirc;mes. Pour cela, on &eacute;limine les ent&ecirc;tes (les 3 premières lignes d'un fichier g&eacute;n&eacute;r&eacute; par colorDescriptor), on enlève aussi la partie "tag" des lignes de caract&eacute;ristiques, sans oublier d'enlever les ";". TRES IMPORTANT : une ligne ne doit pas se terminer par un espace (le retour charriot doit &ecirc;tre juste après la dernière dimension).</p>
+
+<p>Il vous est donc demand&eacute; de cr&eacute;er, pour chaque fichier sift de l'ensemble <tt>test</tt> fourni en <tt>/u/q/quenotg/sift/test/</tt>,  les fichiers nettoy&eacute;s en ne gardant qu'une ligne sur 150. Il vous est demand&eacute; d'eviter de g&eacute;n&eacute;rer toutes les lignes pour des raisons de place occup&eacute;e sur disque. De plus, un fichier <tt>liste_test_sift</tt> donnant toute la liste est dans ce m&ecirc;me r&eacute;pertoire <tt>/u/q/quenotg/sift/test/</tt>.</p>
+
+<p>Ensuite, vous aller concat&eacute;ner tous ces fichiers (rappellons que ces fichiers ne contiennent qu'<STRONG>une ligne de caract&eacute;ristiques toutes les 150</STRONG> par exemple) afin de cr&eacute;er un fichier <PRE>samples.txt</PRE> qui n'a pas trop d'&eacute;chantillons (plus le nombre d'&eacute;chantillons est grand, plus le clustering va n&eacute;cessiter de la m&eacute;moire et plus le traitement sera long, jusqu'à... plusieurs jours, et des dizaines de GB...).</p> C'est ce fichier qui va &ecirc;tre utiliser pour le clustering.
+
+<H4>4.2.2. Calcul de sacs ds SIFT - Clustering</H4>
+
+<p>L'objectif du fichier samples.txt est de g&eacute;n&eacute;rer des regroupements (clusters) on en fixe a priori le nombre. Pour cela, nous allons utiliser le logiciel R</p>
+
+<p>R est un environnement gratuit pour des calculs statistique. Il permet en particulier de r&eacute;aliser du clustering automatique.</p>
+
+<p>Nous vous fournissons ici les instructions R qui permettent de r&eacute;aliser un clustering de type Kmoyennes (Kmeans en anglais). Pour cela, vous devez r&eacute;cup&eacute;rer le code <A HREF="kmeans_clustering.R">kmeans_clustering.R</A>, et de l'utiliser de la manière suivante :<p>
+<PRE>
+R --slave --no-save --no-restore --no-environ --args ./samples.txt 256 ./centers256.txt 10 < kmeans_clustering.R
+</PRE>
+<p>Cet appel indique que l'on utilise R en mode non interactif, avec pour arguments : le fichier samples.txt, le nombre de clusters attendu (ici 256), le fichier qui va stocker les centroïdes des clusters, et enfin le nombre d'it&eacute;rations pour le clustering (ici 10).</p>
+
+<p>Le r&eacute;sultat de cet appel est donc la g&eacute;n&eacute;ration des centroïdes de chaque cluster. Cette &eacute;tape est longue et peut prendre 10 minutes pour s'&eacute;x&eacute;cuter, &eacute;vitez donc de le lancer plusieurs fois. Il faut ensuite passer en revue chaque caract&eacute;ristique visuelle extraite pour lui assigner son cluster, c'est l'objectif de l'&eacute;tape suivante : le mapping.</p>
+
+<p>NOTE : R n'est pas install&eacute; sur toutes les machines de l'ufr. Il est install&eacute; sur mandelbrot, vous devez donc vous connecter sur mandelbrot pour l'utiliser..</p>
+
+<H4>4.2.3. Calcul de sacs ds SIFT - Mapping</H4>
+
+<p>Le mapping consiste à d&eacute;terminer, pour chaque caract&eacute;ristique visuelle extraite, le cluster qui lui correspond (dont le centroide est le plus proche.</p>
+
+<p>Pour cela, nous allons encore faire appel à R, avec le code qui vous est fourni en <A HREF="1nn.R">1nn.R</A>. Le nom 1nn vient du fait que l'on trouve, pour une caract&eacute;ristique le plus proche voisin, c'est-à-dire le "One Nearest Neighbour" (1nn). Ce code appelle R et lui demande, pour chaque &eacute;l&eacute;ment d'une liste de caract&eacute;ristriques, de renvoyer l'identifiant du cluster auquel il est rattach&eacute;. NOTE : le num&eacute;ro de cluster commence à 1.</p>
+
+<p>Un utilisation type de ce code est :</p>
+<PRE>
+R --slave --no-save --no-restore --no-environ --args centers256.txt 256 all_for_R_demo_30 res1nn.txt < 1nn.R
+</PRE>
+<p>qui indique que R attend le fichier de centroïdes (g&eacute;n&eacute;r&eacute; pr&eacute;c&eacute;demment), qu'il travaille sur 256 dimensions (clusters), qu'il doit s'appliquer sur un fichier appel&eacute; ici all_for_R_demo_30 et mettre de r&eacute;sultat dans le fichier res1nn.txt.
+Bien entendu, les noms de fichiers sont indicatifs.</p>
+
+<p>Pour un fichier de caract&eacute;ristiques compos&eacute; de 3 lignes:</p>
+<PRE>
+0 0 1 0 0 0 0 0 0 0 0 1 13 1 0 0 1 0 0 0 41 8 3 4 6 8 1 6 74 1 0 0 1 28 29 12 2 3 2 0 8 9 48 34 40 14 4 4 8 2 2 3 172 94 74 19 65 29 4 16 172 109 9 14 0 9 11 8 7 35 31 2 26 11 23 16 11 32 41 49 23 3 2 9 169 64 18 30 38 0 0 1 172 172 132 73 1 14 33 9 2 6 9 2 6 13 49 17 0 5 13 11 9 10 15 13 33 24 7 7 0 0 5 7 27 77 107 20
+2 0 0 0 2 0 0 2 14 3 1 0 0 0 3 26 14 17 29 28 10 0 0 4 0 0 3 20 17 0 0 0 57 1 0 4 5 0 0 21 119 18 10 6 20 43 40 119 21 35 119 119 96 65 12 13 0 0 23 83 35 2 0 0 70 21 0 1 14 15 4 3 119 119 106 21 32 30 11 27 16 38 62 43 119 119 39 6 1 0 1 3 8 108 23 1 6 9 1 4 36 23 5 0 14 59 70 2 0 1 1 0 119 119 41 11 6 41 25 12 25 20 17 52 83 119 26 9
+9 22 23 10 0 0 0 0 21 23 24 20 2 0 0 0 5 7 12 46 28 1 1 0 0 0 0 2 10 4 9 16 60 61 99 87 27 0 0 10 115 115 115 115 9 0 0 6 58 43 92 115 52 8 29 21 17 9 2 30 45 36 84 83 44 27 14 81 38 1 1 7 85 51 31 81 26 0 0 11 73 115 31 71 17 0 3 8 28 111 25 56 78 25 10 7 2 1 0 6 12 6 115 90 0 3 22 34 20 3 19 71 0 8 43 17 14 1 0 78 0 12 51 32 43 12 3 49 0
+</PRE>
+
+<p>Le r&eacute;sultat g&eacute;n&eacute;r&eacute; est de la forme :</p>
+<PRE>
+189
+101
+146
+</PRE>
+<p>Qui indique que la première caract&eacute;ristique est assign&eacute;e au cluster num&eacute;ro 189, la seconde au cluster 101 et la troisième au cluster 146.</p>
+
+<p>Vous devez donc, à partir du fichier de carat&eacute;ristiques de chaque image de <tt>test</tt>, g&eacute;n&eacute;rer le fichier de mapping et le stocker.</p>
+
+<p>Pour simplifier votre problème, nous vous fournissons le code (shell script) qui permet de g&eacute;nerer les fichiers de mapping en <A HREF="process_1nn_sift.sh">process_1nn_sift.sh</A>. Ce code suppose que :</p> 
+<UL>
+<LI> vous avez dans le r&eacute;pertoire le fichier 1nn.R,
+<LI> que vous avez une hi&eacute;rarchie <tt>sift/test/1nn</tt> à partir du r&eacute;pertoire courant,<LI>  et que le fichier de centroides s'appelle <tt>centers256.txt</tt> . 
+</UL>
+<p>Vous pouvez changer cela en &eacute;ditant ce fichier.
+
+
+<H3>4.3. Troisi&egrave;me partie: recherche combin&eacute;e.</H3>
+
+<p> La recherche combinée s'effectue en fusionnant les valeurs des distances
+selon la couleur et selon les mots visuels. La fusion peut &ecirc;tre effectuée soit
+par une moyenne, éventuellement pondérée, soit par un opérateur maximum entre les
+deux distances. Avant le moyennage ou l'application de l'opérateur maximum,
+il convient de normaliser les distances par modalité (couleur ou texture).
+La normalisation peut se faire au niveau des descripteurs avant le calcul de
+la distance en divisant tous les descripteurs (requ&ecirc;te et images de la
+base) par la norme moyenne des descripteurs des images de la base.
+
+<p>&nbsp;
+</BODY>
+</HTML>
