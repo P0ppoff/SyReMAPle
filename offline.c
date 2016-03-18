@@ -48,17 +48,19 @@ void print_histo (float *hist){
 	printf("Sum : %f\n", sum);
 }
 
-int main(int argc, char *argv[])
-{
-	int i,j;
+void traitement (char *name){
 	CIMAGE cim;
 	float histogramme_cubique[TAILLE_HISTO];
 	
-	read_cimage(argv[1],&cim);
+	read_cimage(name, &cim);
 	init_tab(histogramme_cubique, TAILLE_HISTO);
 	make_histo(histogramme_cubique, &cim);
 	normalize(histogramme_cubique, &cim);
 	print_histo(histogramme_cubique);
-	
+}
+
+int main(int argc, char *argv[])
+{
+	traitement(argv[1]);	
 	exit(0);
 }
