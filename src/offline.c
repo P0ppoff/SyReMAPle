@@ -1,5 +1,4 @@
 #include <stdio.h>
-// #include <malloc.h>
 #include <stdlib.h>
 #include <string.h>
 #include <strings.h>
@@ -49,7 +48,12 @@ void print_histo (float *hist){
 	printf("Sum : %f\n", sum);
 }
 
-void traitement (char *name){
+void print_histo_b (float *hist, FILE *f){
+
+	fwrite(hist, sizeof(hist), 64, f);
+}
+
+void traitement (char *name, FILE *f){
 	CIMAGE cim;
 	float histogramme_cubique[TAILLE_HISTO];
 
@@ -59,7 +63,8 @@ void traitement (char *name){
 	init_tab(histogramme_cubique, TAILLE_HISTO);
 	make_histo(histogramme_cubique, &cim);
 	normalize(histogramme_cubique, &cim);
-	print_histo(histogramme_cubique);
+	//print_histo(histogramme_cubique);
+	print_histo_b(histogramme_cubique, f);
 	free_cimage(NULL, &cim);
 }
 
@@ -71,13 +76,16 @@ void traitement_multi (char *filename){
 	
 	list_file_name = readList(filename, &nb_images);
 	for (i=0; i<nb_images; i++){
-		traitement(list_file_name[i]);
+		traitement(list_file_name[i], binaire);
 	}
 	freeList(list_file_name, nb_images);
 }
 
 int main(int argc, char *argv[])
 {
-	traitement_multi(argv[1]);	
+	FILE *f;
+	f = fopen(binaire, 'w');
+	traitement_multi(argv[1]);
+	fclose(f);	
 	exit(0);
 }
