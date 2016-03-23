@@ -28,8 +28,8 @@ int main(int argc, char *argv[])
   entries = get_entries(qs,&m);
 
   /* émission de l'entête */
-  print_html_head("Réactioalisation Résulat");
-
+  print_html_head("R&eacute;sultat");
+  
   /* affichage éventuel des informations de debug */
   if (DEBUG) print_debug_query(entries,m,qs,argc,argv);
 

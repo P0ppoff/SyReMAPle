@@ -1,0 +1,16 @@
+# ignore itself
+.gitignore
+
+# ignore temporaties files
+*~
+
+# ignore Finder preferences
+.DS_Store
+
+# ignore pfd
+doc/
+
+# ignore binaries
+bin/
+
+
