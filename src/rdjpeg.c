@@ -14,9 +14,9 @@ void read_cimage(char *name, CIMAGE *cim)
   /* djpeg envoie le résultat sur la sortie standard */  
   /*-------------------------------------------------*/  
   if (strstr(name,"http://") == name) {
-    asprintf(&command,"wget -O - \"%s\" -o /dev/null | /usr/bin/djpeg ",name);
+    asprintf(&command,"wget -O - \"%s\" -o /dev/null | bin/djpeg ",name);
   } else {
-    asprintf(&command,"/usr/bin/djpeg \"%s\"",name);
+    asprintf(&command,"bin/djpeg \"%s\"",name);
   }
   /*-----------------------------------*/
   /* lecture d'une image au format PPM */
