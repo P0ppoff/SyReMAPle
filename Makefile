@@ -5,6 +5,11 @@ else
 	CC = gcc
 endif
 
+HEADER_DIR=headers/
+SRC_DIR=src/
+BUILD_DIR=build/
+BIN_DIR=bin/
+
 CFLAGS= 
 LDFLAGS= 
 
@@ -12,14 +17,17 @@ EXECUTABLES=Offline
 
 all: $(EXECUTABLES)
 
-Offline: offline.o rdjpeg.o
-	$(CC) $(CFLAGS) rdjpeg.o offline.o -o $@
+Offline: $(BUILD_DIR)offline.o $(BUILD_DIR)rdjpeg.o
+	$(CC) $(CFLAGS) $(BUILD_DIR)rdjpeg.o $(BUILD_DIR)offline.o -o $@
+	mv $@ $(BIN_DIR)
 
-offline.o: offline.c rdjpeg.h
-	$(CC) $(CFLAGS) -c offline.c 
+$(BUILD_DIR)offline.o: $(SRC_DIR)offline.c $(HEADER_DIR)rdjpeg.h
+	$(CC) $(CFLAGS) -c $(SRC_DIR)offline.c -I$(HEADER_DIR) -o $@
+	# mv $@ $(BUILD_DIR) 
 
-rdjpeg.o: rdjpeg.c rdjpeg.h
-	$(CC) $(CFLAGS) -c rdjpeg.c
+$(BUILD_DIR)rdjpeg.o: $(SRC_DIR)rdjpeg.c $(HEADER_DIR)rdjpeg.h
+	$(CC) $(CFLAGS) -c $(SRC_DIR)rdjpeg.c -I$(HEADER_DIR) -o $@
+	# mv $@ $(BUILD_DIR) 
 
 # Offline: offline.c rdjpeg.h rdjpeg.c
 # 	$(CC) $(CFLAGS) rdjpeg.o offline.c -o $@
@@ -28,7 +36,7 @@ rdjpeg.o: rdjpeg.c rdjpeg.h
 # 	$(CC) $(CFLAGS) $< -c $@
 
 clean:
-	rm -f offline.o rdjpeg.o
+	rm -f $(BUILD_DIR)*
 
 mrproper: clean
-	rm -f $(EXECUTABLES) 
+	rm -f $(BIN_DIR)$(EXECUTABLES) 
