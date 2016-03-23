@@ -17,11 +17,11 @@ EXECUTABLES=Offline
 
 all: $(EXECUTABLES)
 
-Offline: $(BUILD_DIR)offline.o $(BUILD_DIR)rdjpeg.o
-	$(CC) $(CFLAGS) $(BUILD_DIR)rdjpeg.o $(BUILD_DIR)offline.o -o $@
+Offline: $(BUILD_DIR)offline.o $(BUILD_DIR)rdjpeg.o $(BUILD_DIR)proc.o
+	$(CC) $(CFLAGS) $(BUILD_DIR)rdjpeg.o $(BUILD_DIR)offline.o $(BUILD_DIR)proc.o -o $@
 	mv $@ $(BIN_DIR)
 
-$(BUILD_DIR)offline.o: $(SRC_DIR)offline.c $(HEADER_DIR)rdjpeg.h
+$(BUILD_DIR)offline.o: $(SRC_DIR)offline.c $(HEADER_DIR)rdjpeg.h $(HEADER_DIR)proc.h
 	$(CC) $(CFLAGS) -c $(SRC_DIR)offline.c -I$(HEADER_DIR) -o $@
 
 # $(BUILD_DIR)rdjpeg.o: $(SRC_DIR)rdjpeg.c $(HEADER_DIR)rdjpeg.h
