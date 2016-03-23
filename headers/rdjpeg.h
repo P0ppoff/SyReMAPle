@@ -1,5 +1,7 @@
 #include <stdio.h>
-#include <malloc.h>
+#ifdef __linux__
+	#include <malloc.h>
+#endif
 #include <stdlib.h>
 #include <string.h>
 #include <strings.h>

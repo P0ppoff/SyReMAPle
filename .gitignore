@@ -16,3 +16,6 @@ bin/
 # ignore images
 # img/
 
+# ignore build
+build/
+
