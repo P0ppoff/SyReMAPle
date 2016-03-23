@@ -60,7 +60,7 @@ void read_cimage(char *name, CIMAGE *cim)
   pclose(fp);
 }
 
-void free_cimage(char *name, CIMAGE *cim)
+void free_cimage(CIMAGE *cim)
 {
   free(*(cim->r));
   free(*(cim->g));

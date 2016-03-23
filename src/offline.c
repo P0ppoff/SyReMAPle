@@ -48,27 +48,26 @@ void print_histo (float *hist){
 	printf("Sum : %f\n", sum);
 }
 
-void print_histo_b (float *hist, FILE *f){
+void print_histo_binary (float *hist, FILE *f){
 
 	fwrite(hist, sizeof(hist), 64, f);
 }
 
-void traitement (char *name, FILE *f){
+void traitement (char *name, FILE *binaire){
 	CIMAGE cim;
 	float histogramme_cubique[TAILLE_HISTO];
 
 	printf("Traitement %s\n", name);
-	
 	read_cimage(name, &cim);
 	init_tab(histogramme_cubique, TAILLE_HISTO);
 	make_histo(histogramme_cubique, &cim);
 	normalize(histogramme_cubique, &cim);
-	//print_histo(histogramme_cubique);
-	print_histo_b(histogramme_cubique, f);
-	free_cimage(NULL, &cim);
+	print_histo(histogramme_cubique);
+	print_histo_binary(histogramme_cubique, binaire);
+	free_cimage(&cim);
 }
 
-void traitement_multi (char *filename){
+void traitement_multi (char *filename, FILE *binaire){
 
 	int i;
 	int nb_images;
@@ -83,9 +82,11 @@ void traitement_multi (char *filename){
 
 int main(int argc, char *argv[])
 {
-	FILE *f;
-	f = fopen(binaire, 'w');
-	traitement_multi(argv[1]);
-	fclose(f);	
+	FILE *binaire;
+	if (argc == 3){
+		binaire = fopen(argv[2], "w");
+		traitement_multi(argv[1], binaire);
+		fclose(binaire);
+	}
 	exit(0);
 }
