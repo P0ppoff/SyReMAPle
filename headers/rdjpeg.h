@@ -1,5 +1,5 @@
 #include <stdio.h>
-// #include <malloc.h>
+#include <malloc.h>
 #include <stdlib.h>
 #include <string.h>
 #include <strings.h>
@@ -13,3 +13,4 @@ typedef struct {        /* image couleur         */
 } CIMAGE;
 
 void read_cimage(char *name, CIMAGE *cim);
+void free_cimage(char *name, CIMAGE *cim);

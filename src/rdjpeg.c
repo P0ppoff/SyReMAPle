@@ -14,9 +14,9 @@ void read_cimage(char *name, CIMAGE *cim)
   /* djpeg envoie le résultat sur la sortie standard */  
   /*-------------------------------------------------*/  
   if (strstr(name,"http://") == name) {
-    asprintf(&command,"wget -O - \"%s\" -o /dev/null | /usr/local/Cellar/jpeg/8d/bin/djpeg ",name);
+    asprintf(&command,"wget -O - \"%s\" -o /dev/null | /usr/bin/djpeg ",name);
   } else {
-    asprintf(&command,"/usr/local/Cellar/jpeg/8d/bin/djpeg \"%s\"",name);
+    asprintf(&command,"/usr/bin/djpeg \"%s\"",name);
   }
   /*-----------------------------------*/
   /* lecture d'une image au format PPM */
@@ -60,3 +60,12 @@ void read_cimage(char *name, CIMAGE *cim)
   pclose(fp);
 }
 
+void free_cimage(char *name, CIMAGE *cim)
+{
+  free(*(cim->r));
+  free(*(cim->g));
+  free(*(cim->b));
+  free(cim->r);
+  free(cim->g);
+  free(cim->b);
+}
