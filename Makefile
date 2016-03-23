@@ -23,11 +23,9 @@ Offline: $(BUILD_DIR)offline.o $(BUILD_DIR)rdjpeg.o
 
 $(BUILD_DIR)offline.o: $(SRC_DIR)offline.c $(HEADER_DIR)rdjpeg.h
 	$(CC) $(CFLAGS) -c $(SRC_DIR)offline.c -I$(HEADER_DIR) -o $@
-	# mv $@ $(BUILD_DIR) 
 
 $(BUILD_DIR)rdjpeg.o: $(SRC_DIR)rdjpeg.c $(HEADER_DIR)rdjpeg.h
 	$(CC) $(CFLAGS) -c $(SRC_DIR)rdjpeg.c -I$(HEADER_DIR) -o $@
-	# mv $@ $(BUILD_DIR) 
 
 # Offline: offline.c rdjpeg.h rdjpeg.c
 # 	$(CC) $(CFLAGS) rdjpeg.o offline.c -o $@
