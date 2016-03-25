@@ -30,20 +30,23 @@ else
 	@echo "Génération en mode release"
 endif
 
-$(BIN_DIR)Offline: $(BUILD_DIR)offline.o $(BUILD_DIR)rdjpeg.o $(BUILD_DIR)proc.o $(BUILD_DIR)utils.o
+$(BIN_DIR)Offline: $(BUILD_DIR)offline.o $(BUILD_DIR)rdjpeg.o $(BUILD_DIR)proc.o $(BUILD_DIR)histogramme.o
 	$(CC) $(CFLAGS) $^ -o $@
 
-$(BIN_DIR)Post4: $(BUILD_DIR)post4.o $(BUILD_DIR)cgiu.o
-	$(CC) $(CFLAGS) $^ -o $@
-
-$(BUILD_DIR)post4.o: $(SRC_DIR)post4.c $(HEADER_DIR)cgiu.h
+$(BUILD_DIR)offline.o: $(SRC_DIR)offline.c $(HEADER_DIR)histogramme.h
 	$(CC) $(CFLAGS) -c $< -I$(HEADER_DIR) -o $@
 
-$(BUILD_DIR)offline.o: $(SRC_DIR)offline.c $(HEADER_DIR)rdjpeg.h $(HEADER_DIR)proc.h $(HEADER_DIR)utils.h
+$(BUILD_DIR)histogramme.o: $(SRC_DIR)histogramme.c $(HEADER_DIR)rdjpeg.h $(HEADER_DIR)proc.h $(HEADER_DIR)histogramme.h
 	$(CC) $(CFLAGS) -c $< -I$(HEADER_DIR) -o $@
 
 $(BUILD_DIR)%.o: $(SRC_DIR)%.c $(HEADER_DIR)%.h 
 	$(CC) $(CFLAGS) -c $< -I$(HEADER_DIR) -o $@
+
+# $(BIN_DIR)Post4: $(BUILD_DIR)post4.o $(BUILD_DIR)cgiu.o
+# 	$(CC) $(CFLAGS) $^ -o $@
+
+# $(BUILD_DIR)post4.o: $(SRC_DIR)post4.c $(HEADER_DIR)cgiu.h
+# 	$(CC) $(CFLAGS) -c $< -I$(HEADER_DIR) -o $@
 
 .PHONY: clean mrproper
 
