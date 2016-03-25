@@ -12,16 +12,16 @@ BIN_DIR=bin/
 
 DEBUG=yes
 ifeq ($(DEBUG),yes)
-	CFLAGS=-g
+	CFLAGS=-g -lm
 	LDFLAGS=
 	# -W -Wall -ansi -pedantic
 else
-	CFLAGS=
+	CFLAGS=-lm
 	LDFLAGS=
 endif
 
-EXECUTABLES=$(BIN_DIR)Offline 
-#$(BIN_DIR)Post4
+EXECUTABLES=$(BIN_DIR)MakeHisto 
+#$(BIN_DIR)Post4 $(BIN_DIR)Offline
 
 all: $(EXECUTABLES)
 ifeq ($(DEBUG),yes)
@@ -30,10 +30,10 @@ else
 	@echo "Génération en mode release"
 endif
 
-$(BIN_DIR)Offline: $(BUILD_DIR)offline.o $(BUILD_DIR)rdjpeg.o $(BUILD_DIR)proc.o $(BUILD_DIR)histogramme.o
+$(BIN_DIR)MakeHisto: $(BUILD_DIR)make_histo.o $(BUILD_DIR)rdjpeg.o $(BUILD_DIR)proc.o $(BUILD_DIR)histogramme.o
 	$(CC) $(CFLAGS) $^ -o $@
 
-$(BUILD_DIR)offline.o: $(SRC_DIR)offline.c $(HEADER_DIR)histogramme.h
+$(BUILD_DIR)make_histo.o: $(SRC_DIR)make_histo.c $(HEADER_DIR)histogramme.h
 	$(CC) $(CFLAGS) -c $< -I$(HEADER_DIR) -o $@
 
 $(BUILD_DIR)histogramme.o: $(SRC_DIR)histogramme.c $(HEADER_DIR)rdjpeg.h $(HEADER_DIR)proc.h $(HEADER_DIR)histogramme.h
@@ -41,6 +41,12 @@ $(BUILD_DIR)histogramme.o: $(SRC_DIR)histogramme.c $(HEADER_DIR)rdjpeg.h $(HEADE
 
 $(BUILD_DIR)%.o: $(SRC_DIR)%.c $(HEADER_DIR)%.h 
 	$(CC) $(CFLAGS) -c $< -I$(HEADER_DIR) -o $@
+
+# $(BIN_DIR)Offline: $(BUILD_DIR)offline.o $(BUILD_DIR)rdjpeg.o $(BUILD_DIR)proc.o $(BUILD_DIR)histogramme.o
+# 	$(CC) $(CFLAGS) $^ -o $@
+
+# $(BUILD_DIR)offline.o: $(SRC_DIR)offline.c $(HEADER_DIR)histogramme.h
+# 	$(CC) $(CFLAGS) -c $< -I$(HEADER_DIR) -o $@
 
 # $(BIN_DIR)Post4: $(BUILD_DIR)post4.o $(BUILD_DIR)cgiu.o
 # 	$(CC) $(CFLAGS) $^ -o $@
