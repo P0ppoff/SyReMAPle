@@ -5,10 +5,7 @@
 
 #include "rdjpeg.h"
 #include "proc.h"
-
-#define NB_INTER 4
-#define NIVEAU_COLOR 256
-#define TAILLE_HISTO NB_INTER * NB_INTER * NB_INTER
+#include "utils.h"
 
 void make_histo (float *hist, CIMAGE *image){
 	int R, G, B, k, i, j;

@@ -10,9 +10,9 @@
 
 #define  DEBUG 1
 
-main(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
-    int x,m;
+    int m;
     char *qs,*url;
     entry *entries;
 

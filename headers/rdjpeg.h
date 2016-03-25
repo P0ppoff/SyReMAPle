@@ -1,3 +1,6 @@
+#ifndef _RDJPEG_H
+#define _RDJPEG_H
+
 #include <stdio.h>
 #ifdef __linux__
 	#include <malloc.h>
@@ -16,3 +19,5 @@ typedef struct {        /* image couleur         */
 
 void read_cimage(char *name, CIMAGE *cim);
 void free_cimage(CIMAGE *cim);
+
+#endif
