@@ -5,13 +5,6 @@
 
 #include "histogramme.h"
 
-void init_tab (float *tab, int taille){
-	int i;
-	for(i=0; i<taille ; i++){
-		tab[i] = 0.0;
-	}
-}
-
 void traitement_file (char *name, FILE *binaire){
 	CIMAGE cim;
 	float histogramme_cubique[TAILLE_HISTO];
@@ -42,10 +35,13 @@ void traitement_multi_file (char *filename, FILE *binaire){
 int main(int argc, char *argv[])
 {
 	FILE *binaire;
-	if (argc == 3){
-		binaire = fopen(argv[2], "w");
-		traitement_multi_file(argv[1], binaire);
-		fclose(binaire);
+	if (argc != 3){
+		printf("2 arguments : le fichier contenant le nom/url des images, et le fichier binaire de stockage\n");
+		exit(1);
 	}
+	binaire = fopen(argv[2], "w");
+	traitement_multi_file(argv[1], binaire);
+	fclose(binaire);
+
 	exit(0);
 }
