@@ -1,7 +1,5 @@
 #include "histogramme.h"
 
-#define DEBUG 0
-
 int distance_euclidienne (float *x, float *y){
 	int d = 0;
 	int i;
@@ -28,10 +26,10 @@ void print_histo (float *hist){
 	int i;
 	float sum = 0.0;
 	for(i=0 ; i<TAILLE_HISTO ; i++){
-		if (DEBUG) printf("[%i] -> %f\n", i, hist[i]);
+		printf("[%i] -> %f\n", i, hist[i]);
 		sum += hist[i];
 	}
-	if (DEBUG) printf("Sum : %f\n", sum);
+	printf("Sum : %f\n", sum);
 }
 
 void print_histo_binary (float *hist, FILE *f){

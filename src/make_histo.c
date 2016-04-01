@@ -5,6 +5,8 @@
 
 #include "histogramme.h"
 
+#define DEBUG 0
+
 void traitement_file (char *name, FILE *binaire){
 	CIMAGE cim;
 	float histogramme_cubique[TAILLE_HISTO];
@@ -14,7 +16,7 @@ void traitement_file (char *name, FILE *binaire){
 	init_tab(histogramme_cubique, TAILLE_HISTO);
 	make_histo(histogramme_cubique, &cim);
 	normalize(histogramme_cubique, &cim);
-	print_histo(histogramme_cubique);
+	if (DEBUG) print_histo(histogramme_cubique);
 	print_histo_binary(histogramme_cubique, binaire);
 	free_cimage(&cim);
 }
