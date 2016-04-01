@@ -1,5 +1,7 @@
 #include "histogramme.h"
 
+#define DEBUG 0
+
 int distance_euclidienne (float *x, float *y){
 	int d = 0;
 	int i;
@@ -26,21 +28,35 @@ void print_histo (float *hist){
 	int i;
 	float sum = 0.0;
 	for(i=0 ; i<TAILLE_HISTO ; i++){
-		printf("[%i] -> %f\n", i, hist[i]);
+		if (DEBUG) printf("[%i] -> %f\n", i, hist[i]);
 		sum += hist[i];
 	}
-	printf("Sum : %f\n", sum);
+	if (DEBUG) printf("Sum : %f\n", sum);
 }
 
 void print_histo_binary (float *hist, FILE *f){
-
-	fwrite(hist, sizeof(hist), 64, f);
+	fwrite(hist, sizeof(hist), 1, f);
 }
+
+void read_histo_binary (float *histo, FILE *f){
+	int nb_lu;
+	nb_lu = fread(histo, sizeof(histo), 1, f);
+	if (nb_lu != TAILLE_HISTO) exit(1);
+	// http://www.tutorialspoint.com/c_standard_library/c_function_fread.htm
+}
+
 
 void normalize (float *hist, CIMAGE *image){
 	int i;
 	float nb_pixel = image->ny * image->nx;
 	for(i=0 ; i<TAILLE_HISTO ; i++){
 		hist[i] = hist[i]/nb_pixel;
+	}
+}
+
+void init_tab (float *tab, int taille){
+	int i;
+	for(i=0; i<taille ; i++){
+		tab[i] = 0.0;
 	}
 }

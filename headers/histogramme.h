@@ -15,6 +15,8 @@ int distance_euclidienne (float *x, float *y);
 void make_histo (float *hist, CIMAGE *image);
 void print_histo (float *hist);
 void print_histo_binary (float *hist, FILE *f);
+void read_histo_binary (float *histo, FILE *f);
 void normalize (float *hist, CIMAGE *image);
+void init_tab (float *tab, int taille);
 
 #endif
