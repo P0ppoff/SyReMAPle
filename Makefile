@@ -10,7 +10,7 @@ SRC_DIR=src/
 BUILD_DIR=build/
 BIN_DIR=bin/
 
-DEBUG=yes
+DEBUG=no
 ifeq ($(DEBUG),yes)
 	CFLAGS=-g -lm
 	LDFLAGS=

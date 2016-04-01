@@ -12,6 +12,7 @@ doc/
 
 # ignore binaries
 bin/
+binaire
 
 # ignore images
 # img/
