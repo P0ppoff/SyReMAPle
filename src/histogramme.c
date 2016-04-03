@@ -38,9 +38,13 @@ void print_histo_binary (float *hist, FILE *f){
 
 void read_histo_binary (float *histo, FILE *f){
 	int nb_lu;
-	nb_lu = fread(histo, sizeof(histo), 1, f);
-	if (nb_lu != TAILLE_HISTO) exit(1);
-	// http://www.tutorialspoint.com/c_standard_library/c_function_fread.htm
+	int nb_a_lire = 1;
+	nb_lu = fread(histo, sizeof(histo), nb_a_lire, f);
+	if (nb_lu != nb_a_lire){
+		printf("Nombre d'octets lus : %i\n", nb_lu);
+		fclose(f);
+		exit(1);
+	}
 }
 
 

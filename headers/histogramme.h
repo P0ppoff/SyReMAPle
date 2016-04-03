@@ -2,6 +2,7 @@
 #define _HISTO_H
 
 #include <math.h>
+#include <stdio.h>
 
 #include "rdjpeg.h"
 #include "proc.h"
