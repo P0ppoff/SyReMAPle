@@ -43,6 +43,11 @@ int main(int argc, char *argv[])
 	}
 	// printf("tableau de comparaison rempli avec %i images -> DONE\n", i);
 	qsort(tab_key, nb_images, sizeof(KEY), keyCompare);
+	/*
+	for(i=0 ; i<nb_images ; i++){
+		printf("%i %f \n", tab_key[i].k, tab_key[i].d);
+	}
+*/
 	// printf("Tri -> DONE\n");
 	printf("<html>\n\t<body>\n");
 	for(i=0 ; i<10 ; i++){

@@ -1,10 +1,12 @@
 #include "histogramme.h"
 
-int distance_euclidienne (float *x, float *y){
-	int d = 0;
+float distance_euclidienne (float *x, float *y){
+	float d = 0.0;
 	int i;
 	for(i=0 ; i<TAILLE_HISTO ; i++){
-		d += pow((x[i]-y[i]),2) / (x[i]+y[i]);
+		//d += pow((x[i]-y[i]),2) / (x[i]+y[i]);
+		d += sqrt(((x[i]-y[i])*(x[i]-y[i])));
+		//printf("%f \n", d);
 	}
 	return d;
 }

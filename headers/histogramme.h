@@ -12,7 +12,7 @@
 #define NIVEAU_COLOR 256
 #define TAILLE_HISTO NB_INTER * NB_INTER * NB_INTER
 
-int distance_euclidienne (float *x, float *y);
+float distance_euclidienne (float *x, float *y);
 void make_histo (float *hist, CIMAGE *image);
 void print_histo (float *hist);
 void print_histo_binary (float *hist, FILE *f);
