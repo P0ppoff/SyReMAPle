@@ -51,7 +51,7 @@ float **readDescriptors(char *name, int n, int *d)
   fp = fopen(name,"r");
   if (fp == NULL) return(NULL);
   fseek(fp,0,SEEK_END);
-  *d = ftell(fp)/(n*sizeof(float));
+  *d = ftell(fp)/(n*sizeof(float)); // nombre d'élément à lire en octet
   rewind(fp);
   m = malloc(n*sizeof(float *));
   if (m == NULL) return(NULL);
