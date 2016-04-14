@@ -8,6 +8,8 @@
 #define TAILLE_LIGNE 1000
 #define INPUT 150
 
+#define GUI 1
+
 char* traitement_caracteristique(char *ligne){
 	const char delim[2] = ";"; 
 	char *tag = strtok(ligne, delim);
@@ -32,7 +34,7 @@ void read_sift(char *name_sift, FILE *sample){
 	/* lecture d'une image au format PPM */
 	/*-----------------------------------*/
 	if ((fp = popen(command,"r")) == NULL) {
-		fprintf(stderr,"Can't open PBM file from \"%s\" command, exiting",command);
+		fprintf(stderr,"Can't open SIFT file from \"%s\" command, exiting\n",command);
 		exit(1);
 	}
 	free(command);
@@ -47,6 +49,15 @@ void read_sift(char *name_sift, FILE *sample){
 		free(ligne);
 		ligne = NULL;
 	}
+	pclose(fp);
+}
+
+void downlaod_GUI (int total, int progresion, int *precedent){
+	int pourcentage = progresion*100 / total;
+	if(pourcentage >= (*precedent + 1)){
+		printf("=");
+		*precedent = pourcentage;
+	}
 }
 
 int main(int argc, char *argv[])
@@ -59,17 +70,21 @@ int main(int argc, char *argv[])
 
 	FILE *sample;
 	char **list_file_name;
-	int nb_images, i;
+	int nb_images, i, progresion;
 	char *name_image_found;
 
 	sample = fopen(argv[2], "w");
 	list_file_name = readList(argv[1], &nb_images);
 
+	// if(GUI) printf("\t["); 
+	progresion = 0;
 	for(i=0 ; i<nb_images ; i++){
 		name_image_found = list_file_name[i];
 		printf("\tTraitement de %s…\n", name_image_found);
 		read_sift(name_image_found, sample);
+		// if(GUI) downlaod_GUI(nb_images, i, &progresion);
 	}
+	// if(GUI)printf("]\n");
 
 	freeList(list_file_name, nb_images);
 	fclose(sample);
